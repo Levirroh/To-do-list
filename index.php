@@ -193,7 +193,7 @@ $result_usuarios = $stmt_usuarios->get_result();
                     $stmt_alterar_status = $conn->prepare($sql_alterar_status);
                     $stmt_alterar_status->bind_param('i', $id_tarefa);
                     $stmt_alterar_status->execute();
-                    header ("Location: index.php");
+                    header("Refresh: 0");
                     exit();
                 } elseif (isset($_POST['fazendo']) AND !isset($_POST['aFazer']) AND !isset($_POST['pronto'])){
                     $id_tarefa = $_POST["fazendo"];
@@ -201,7 +201,7 @@ $result_usuarios = $stmt_usuarios->get_result();
                     $stmt_alterar_status = $conn->prepare($sql_alterar_status);
                     $stmt_alterar_status->bind_param('i', $id_tarefa);
                     $stmt_alterar_status->execute();
-                    header ("Location: index.php");
+                    header("Refresh: 0");
                     exit();
                 }elseif (isset($_POST['pronto']) AND !isset($_POST['fazendo']) AND !isset($_POST['aFazer'])){
                     $id_tarefa = $_POST["pronto"];
@@ -209,7 +209,7 @@ $result_usuarios = $stmt_usuarios->get_result();
                     $stmt_alterar_status = $conn->prepare($sql_alterar_status);
                     $stmt_alterar_status->bind_param('i', $id_tarefa);
                     $stmt_alterar_status->execute();
-                    header ("Location: index.php");
+                    header("Refresh: 0");
                     exit();
                 } else {
                     echo "Selecione uma opção antes de atualizar os dados";
