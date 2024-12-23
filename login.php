@@ -16,7 +16,8 @@ if (isset($_POST['login'])){
         $row = $resultado->fetch_assoc();
         // achou um usuário com o nome
         if ($senha_usuario == $row['senha_usuario']){
-            $_SESSION['nome_usuario'] = $nome_usuario;
+            $_SESSION['nome_usuario'] = $row['nome_usuario'];
+            $_SESSION['id_usuario'] = $row['id_usuario'];
             header('location: index.php');
             exit;
         } else{
