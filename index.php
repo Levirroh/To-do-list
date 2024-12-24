@@ -38,7 +38,23 @@ if (isset($_POST["deletar"])){
         echo "Erro ao deletar o registro.";
     }
 };
+if (isset($_POST["terminar"])){
+    $id_tarefa = $_POST['id_tarefa'];
+    $sql = "DELETE FROM Tarefas WHERE id_tarefa = ?";
 
+    $stmt_deletar = $conn->prepare($sql);
+    $stmt_deletar->bind_param('i', $id_tarefa);
+    $stmt_deletar->execute();
+
+    if ($stmt_deletar->affected_rows > 0) {
+        echo "Registro deletado com sucesso!";
+        echo "<br>Talvez seja necessário atualizar a página!";
+        header("Location: index.php");
+        exit();
+    } else {
+        echo "Erro ao deletar o registro.";
+    }
+};
 
 
 $sql_usuarios = "SELECT id_usuario, nome_usuario FROM Usuarios";
@@ -51,7 +67,7 @@ $result_usuarios = $stmt_usuarios->get_result();
 <head>
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="horizontal">
     <header>
         <div>
             <h1>Tela de Gerenciamento de Tarefas</h1>
@@ -66,15 +82,16 @@ $result_usuarios = $stmt_usuarios->get_result();
         <?php
     echo "<section class ='grid'>
                 <div class='status'>
-                    <h2>A FAZER</h2>
-                ";
+                    <div>
+                        <h2>A FAZER</h2>
+                    </div>";
                 if ($resultado_aFazer->num_rows > 0) {
                     while ($row = $resultado_aFazer->fetch_assoc()) {
                         echo "<div class='tarefa'>
+                                <h3>Nome: {$row['nome_tarefa']}</h3>
                                 <p>Descrição: {$row['descricao_tarefa']}</p> 
                                 <p>assunto: {$row['assunto_tarefa']}</p> 
                                 <p>Prioridade: {$row['prioridade_tarefa']}</p> 
-                                <p>Vinculado a: {$row['nome_usuario']}</p> 
                                 <div class='opcoes'>
                                     <form method='GET' action='cadastrar_tarefa.php'>
                                         <input type='hidden' name='id_tarefa' value='{$row['id_tarefa']}'>
@@ -87,15 +104,19 @@ $result_usuarios = $stmt_usuarios->get_result();
                                 </div>
                                 <div>
                                     <form method='POST' action='' class='alterar-status'>
-                                        <div> 
-                                            <input type='radio' name='aFazer' value='{$row['id_tarefa']}'>
-                                            <label for='aFazer'>A Fazer<label>
-                                            
-                                            <input type='radio' name='fazendo' value='{$row['id_tarefa']}'>
-                                            <label for='fazendo'>Fazendo<label>
-
-                                            <input type='radio' name='pronto' value='{$row['id_tarefa']}'>
-                                            <label for='pronto'>Pronto<label>
+                                        <div class='mudar-prioridade'> 
+                                            <div>
+                                                    <input type='radio' name='aFazer' value='{$row['id_tarefa']}>
+                                                    <label for='aFazer'>A Fazer<label>
+                                                </div>
+                                                <div>
+                                                    <input type='radio' name='fazendo' value='{$row['id_tarefa']}>
+                                                    <label for='fazendo'>Fazendo<label>
+                                                </div>
+                                                <div>
+                                                    <input type='radio' name='pronto' value='{$row['id_tarefa']}>
+                                                    <label for='pronto'>Pronto<label>
+                                                </div>
                                         </div>
                                         <input type='submit' name='alterar_status' value='Alterar Status'>
                                     </form>
@@ -105,14 +126,17 @@ $result_usuarios = $stmt_usuarios->get_result();
             };
             echo"</div>
                 <div class='status'>
-                    <h2>FAZENDO</h2>";
+                    <div>
+                        <h2>FAZENDO</h2>
+                    </div>";
+
                     if ($resultado_fazendo->num_rows > 0) {
                         while ($row = $resultado_fazendo->fetch_assoc()) {
                             echo "<div class='tarefa'>
+                                    <h3>Nome: {$row['nome_tarefa']}</h3>
                                     <p>Descrição: {$row['descricao_tarefa']}</p> 
                                     <p>assunto: {$row['assunto_tarefa']}</p> 
                                     <p>Prioridade: {$row['prioridade_tarefa']}</p> 
-                                    <p>Vinculado a: {$row['nome_usuario']}</p> 
                                     <div class='opcoes'>
                                         <form method='GET' action='cadastrar_tarefa.php'>
                                             <input type='hidden' name='id_tarefa' value='{$row['id_tarefa']}'>
@@ -122,19 +146,26 @@ $result_usuarios = $stmt_usuarios->get_result();
                                             <input type='hidden' name='id_tarefa' value='{$row['id_tarefa']}'>
                                             <input type='submit' name='deletar' value='Excluir'>
                                         </form>
-                                        
+                                        <form method='POST' action=''>
+                                            <input type='hidden' name='id_tarefa' value='{$row['id_tarefa']}'>
+                                            <input type='submit' name='terminar' value='Terminar Tarefa'>
+                                        </form>
                                     </div>
                                     <div>
                                         <form method='POST' action='' class='alterar-status'>
-                                            <div> 
-                                                <input type='radio' name='aFazer' value='{$row['id_tarefa']}'>
-                                                <label for='aFazer'>A Fazer<label>
-                                                
-                                                <input type='radio' name='fazendo' value='{$row['id_tarefa']}'>
-                                                <label for='fazendo'>Fazendo<label>
-    
-                                                <input type='radio' name='pronto' value='{$row['id_tarefa']}'>
-                                                <label for='pronto'>Pronto<label>
+                                            <div class='mudar-prioridade'> 
+                                                <div>
+                                                    <input type='radio' name='aFazer' value='{$row['id_tarefa']}>
+                                                    <label for='aFazer'>A Fazer<label>
+                                                </div>
+                                                <div>
+                                                    <input type='radio' name='fazendo' value='{$row['id_tarefa']}>
+                                                    <label for='fazendo'>Fazendo<label>
+                                                </div>
+                                                <div>
+                                                    <input type='radio' name='pronto' value='{$row['id_tarefa']}>
+                                                    <label for='pronto'>Pronto<label>
+                                                </div>
                                             </div>
                                             <input type='submit' name='alterar_status' value='Alterar Status'>
                                         </form>
@@ -144,14 +175,16 @@ $result_usuarios = $stmt_usuarios->get_result();
                 };
             echo"</div>
                 <div class='status'>
-                    <h2>PRONTO</h2>";
+                    <div>
+                        <h2>PRONTO</h2>
+                    </div>";
                     if ($resultado_pronto->num_rows > 0) {
                         while ($row = $resultado_pronto->fetch_assoc()) {
                             echo "<div class='tarefa'>
+                                    <h3>Nome: {$row['nome_tarefa']}</h3>
                                     <p>Descrição: {$row['descricao_tarefa']}</p> 
                                     <p>assunto: {$row['assunto_tarefa']}</p> 
                                     <p>Prioridade: {$row['prioridade_tarefa']}</p> 
-                                    <p>Vinculado a: {$row['nome_usuario']}</p> 
                                     <div class='opcoes'>
                                         <form method='GET' action='cadastrar_tarefa.php'>
                                             <input type='hidden' name='id_tarefa' value='{$row['id_tarefa']}'>
@@ -165,15 +198,19 @@ $result_usuarios = $stmt_usuarios->get_result();
                                     </div>
                                     <div>
                                         <form method='POST' action='' class='alterar-status'>
-                                            <div> 
-                                                <input type='radio' name='aFazer' value='{$row['id_tarefa']}>
-                                                <label for='aFazer'>A Fazer<label>
-                                                
-                                                <input type='radio' name='fazendo' value='{$row['id_tarefa']}>
-                                                <label for='fazendo'>Fazendo<label>
-    
-                                                <input type='radio' name='pronto' value='{$row['id_tarefa']}>
-                                                <label for='pronto'>Pronto<label>
+                                            <div class='mudar-prioridade'> 
+                                                <div>
+                                                    <input type='radio' name='aFazer' value='{$row['id_tarefa']}>
+                                                    <label for='aFazer'>A Fazer<label>
+                                                </div>
+                                                <div>
+                                                    <input type='radio' name='fazendo' value='{$row['id_tarefa']}>
+                                                    <label for='fazendo'>Fazendo<label>
+                                                </div>
+                                                <div>
+                                                    <input type='radio' name='pronto' value='{$row['id_tarefa']}>
+                                                    <label for='pronto'>Pronto<label>
+                                                </div>
                                             </div>
                                             <input type='submit' name='alterar_status' value='Alterar Status'>
                                         </form>
