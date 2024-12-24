@@ -22,12 +22,17 @@ button{
 }
 
 .grid{
-    display: grid;
+    display:grid;
     column-gap: 3%;
     grid-template-columns: 30% 30% 30%;
     height: 100%; /* Garante que o grid ocupe o espaço completo */
     overflow-y: auto; /* Permite rolagem vertical */
     padding: 10px; /* Espaçamento interno para melhorar a estética */
+    width: 100%;
+}
+
+.grid h2{
+    text-align: center;   
 }
 
 .tarefa{
@@ -41,8 +46,7 @@ button{
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: auto; /* Ajusta o tamanho automaticamente */
-    max-height: calc(100vh - 150px); /* Define uma altura máxima (ajuste conforme necessário) */
+    height: 90vh; /* Ajusta o tamanho automaticamente */
     overflow-y: auto; /* Habilita rolagem no conteúdo */
     border: solid 1px #ddd; /* Adiciona uma borda para visualização melhor */
     padding: 10px;
@@ -93,3 +97,4 @@ button{
     height: 17vh;
     opacity: 75%;
 }
+

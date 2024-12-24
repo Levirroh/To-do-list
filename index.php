@@ -79,13 +79,13 @@ $result_usuarios = $stmt_usuarios->get_result();
         </div>
     </header>
 
-    <section>
-        <?php
-    echo "<section class ='grid'>
-                <div class='status'>
-                    <div>
-                        <h2>A FAZER</h2>
-                    </div>";
+<?php
+    echo "<section class ='grid'>   
+            <div>  
+                <div>
+                    <h2>A FAZER</h2>
+                </div>
+                <div class='status'>";
                 if ($resultado_aFazer->num_rows > 0) {
                     while ($row = $resultado_aFazer->fetch_assoc()) {
                         echo "<div class='tarefa'>
@@ -124,18 +124,19 @@ $result_usuarios = $stmt_usuarios->get_result();
                                 </div>
                             </div>";
                 }
-                echo "<a href='cadastrar_tarefa.php' class='nova-tarefa'>
+            };
+            echo "<a href='cadastrar_tarefa.php' class='nova-tarefa'>
                         <div>
                             <img src='imagens/plus-square-solid.svg' class='imagem-nova-tarefa'>
                         </div>
-                    </a>";
-            };
+                    </a>
+                </div>";
             echo"</div>
-                <div class='status'>
                     <div>
-                        <h2>FAZENDO</h2>
-                    </div>";
-
+                        <div>
+                            <h2>FAZENDO</h2>
+                        </div>
+                        <div class='status'>";
                     if ($resultado_fazendo->num_rows > 0) {
                         while ($row = $resultado_fazendo->fetch_assoc()) {
                             echo "<div class='tarefa'>
@@ -179,11 +180,13 @@ $result_usuarios = $stmt_usuarios->get_result();
                                 </div>";
                     }
                 };
+            echo '</div>';
             echo"</div>
-                <div class='status'>
                     <div>
-                        <h2>PRONTO</h2>
-                    </div>";
+                        <div>
+                            <h2>PRONTO</h2>
+                        </div>
+                        <div class='status'>";
                     if ($resultado_pronto->num_rows > 0) {
                         while ($row = $resultado_pronto->fetch_assoc()) {
                             echo "<div class='tarefa'>
