@@ -70,7 +70,7 @@ $result_usuarios = $stmt_usuarios->get_result();
 <body class="horizontal">
     <header>
         <div>
-            <h1>Tela de Gerenciamento de Tarefas</h1>
+            <h2>Menu</h2>
         </div>
         <div>
             <a href="cadastrar_tarefa.php"><button>Cadastrar tarefa</button></a>
@@ -78,6 +78,7 @@ $result_usuarios = $stmt_usuarios->get_result();
             <a href="cadastro.php"><button>Criar nova conta</button></a>
         </div>
     </header>
+
     <section>
         <?php
     echo "<section class ='grid'>
@@ -123,6 +124,11 @@ $result_usuarios = $stmt_usuarios->get_result();
                                 </div>
                             </div>";
                 }
+                echo "<a href='cadastrar_tarefa.php' class='nova-tarefa'>
+                        <div>
+                            <img src='imagens/plus-square-solid.svg' class='imagem-nova-tarefa'>
+                        </div>
+                    </a>";
             };
             echo"</div>
                 <div class='status'>
