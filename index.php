@@ -7,11 +7,61 @@ if (!isset($_SESSION['nome_usuario'])){
     exit;
 }
 
+        
+if (isset($_POST["alterar_status"])){
+    if (isset($_POST['aFazer']) AND !isset($_POST['fazendo']) AND !isset($_POST['pronto'])){
+        $id_tarefa = $_POST["aFazer"];
+        $sql_alterar_status = "UPDATE tarefas SET status_tarefa = 'A fazer' WHERE id_tarefa = ?";
+        $stmt_alterar_status = $conn->prepare($sql_alterar_status);
+        $stmt_alterar_status->bind_param('i', $id_tarefa);
+        $stmt_alterar_status->execute();
+        header("Location: index.php");
+        exit();
+    } elseif (isset($_POST['fazendo']) AND !isset($_POST['aFazer']) AND !isset($_POST['pronto'])){
+        $id_tarefa = $_POST["fazendo"];
+        $sql_alterar_status = "UPDATE tarefas SET status_tarefa = 'Fazendo' WHERE id_tarefa = ?";
+        $stmt_alterar_status = $conn->prepare($sql_alterar_status);
+        $stmt_alterar_status->bind_param('i', $id_tarefa);
+        $stmt_alterar_status->execute();
+        header("Location: index.php");
+        exit();
+    }elseif (isset($_POST['pronto']) AND !isset($_POST['fazendo']) AND !isset($_POST['aFazer'])){
+        $id_tarefa = $_POST["pronto"];
+        $sql_alterar_status = "UPDATE tarefas SET status_tarefa = 'Pronto' WHERE id_tarefa = ?";
+        $stmt_alterar_status = $conn->prepare($sql_alterar_status);
+        $stmt_alterar_status->bind_param('i', $id_tarefa);
+        $stmt_alterar_status->execute();
+        header("Location: index.php");
+        exit();
+    } else {
+        echo "Selecione uma opção antes de atualizar os dados";
+    }
+};
 $id_usuario = $_SESSION['id_usuario'];
 // tarefa a fazer
-    $stmt_aFazer = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'A fazer' AND fk_usuario = '$id_usuario'");
-    $stmt_aFazer->execute();
-    $resultado_aFazer = $stmt_aFazer->get_result();
+    if (isset($_POST['filtrar_assunto'])){
+        $assunto_filtro = $_POST['assunto'];
+        $stmt_aFazer = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'A fazer' AND fk_usuario = '$id_usuario' AND assunto_tarefa = '$assunto_filtro'");
+        $stmt_aFazer->execute();
+        $resultado_aFazer = $stmt_aFazer->get_result();
+        $assunto = true;    
+    } else {
+        $assunto = false;
+    };
+    
+    if (isset($_POST['prioridade'])){
+    $assunto = true;
+    } else {
+        $prioridade = false;
+    };
+        
+    if ($assunto == false AND $prioridade == false){
+        $stmt_aFazer = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'A fazer' AND fk_usuario = '$id_usuario'");
+        $stmt_aFazer->execute();
+        $resultado_aFazer = $stmt_aFazer->get_result();
+    } 
+
+
 // tarefa fazendo
     $stmt_fazendo = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'Fazendo' AND fk_usuario = '$id_usuario'");
     $stmt_fazendo->execute();
@@ -61,13 +111,19 @@ $sql_usuarios = "SELECT id_usuario, nome_usuario FROM Usuarios";
 $stmt_usuarios = $conn->prepare($sql_usuarios);
 $stmt_usuarios->execute();
 $result_usuarios = $stmt_usuarios->get_result();
+
+
+$sql_filtros= "SELECT DISTINCT assunto_tarefa FROM Tarefas";
+$stmt_filtros = $conn->prepare($sql_filtros);
+$stmt_filtros->execute();
+$result_filtros = $stmt_filtros->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <link rel="stylesheet" href="styles.css">
 </head>
-<body class="horizontal">
+<body class="horizontal" id="index">
     <header>
         <div>
             <h2>Menu</h2>
@@ -85,10 +141,40 @@ $result_usuarios = $stmt_usuarios->get_result();
                 <div>
                     <h2>A FAZER</h2>
                 </div>
-                <div class='status'>";
+                <div class='status'>
+                ";
                 if ($resultado_aFazer->num_rows > 0) {
+                    echo "<div class='filtros'>
+                            <form method='POST'>
+                                <div>
+                                    <label for='prioridade'>Filtrar por prioridade
+                                    <select name='prioridade'>
+                                        <option value='nenhum' selected disabled>Filtrar</option>
+                                        <option value='Alta'>Alta</option>
+                                        <option value='Média'>Média</option>
+                                        <option value='baixa'>Baixa</option>
+                                    </select>
+                                </div>
+                                    <input type='submit' value='Filtrar' name='prioridade'>
+                            </form>
+                            <form method='POST'>
+                                <div>
+                                    <label for='assunto'>Filtrar por assunto
+                                    <select name='assunto'>";
+                                        while ($filtro = $result_filtros->fetch_assoc()): ?>
+                                            <option value="<?= $filtro['assunto_tarefa']; ?>">
+                                                <?= $filtro['assunto_tarefa']; ?>
+                                            </option>
+                                        <?php endwhile;
+                                        echo "
+                                    </select>
+                                </div>
+                                <input type='submit' value='Filtrar' name='filtrar_assunto'>
+                            </form>
+                        </div>";
                     while ($row = $resultado_aFazer->fetch_assoc()) {
-                        echo "<div class='tarefa'>
+                            $cor = $row['prioridade_tarefa'];
+                        echo "<div class='tarefa $cor'>
                                 <h3>Nome: {$row['nome_tarefa']}</h3>
                                 <p>Descrição: {$row['descricao_tarefa']}</p> 
                                 <p>assunto: {$row['assunto_tarefa']}</p> 
@@ -189,7 +275,8 @@ $result_usuarios = $stmt_usuarios->get_result();
                         <div class='status'>";
                     if ($resultado_pronto->num_rows > 0) {
                         while ($row = $resultado_pronto->fetch_assoc()) {
-                            echo "<div class='tarefa'>
+                            $cor = $row['prioridade_tarefa'];
+                            echo "<div class='tarefa $cor'>
                                     <h3>Nome: {$row['nome_tarefa']}</h3>
                                     <p>Descrição: {$row['descricao_tarefa']}</p> 
                                     <p>assunto: {$row['assunto_tarefa']}</p> 
@@ -230,38 +317,7 @@ $result_usuarios = $stmt_usuarios->get_result();
             echo"</div>
             </section>";
         ?>
-        <?php
-                    
-            if (isset($_POST["alterar_status"])){
-                if (isset($_POST['aFazer']) AND !isset($_POST['fazendo']) AND !isset($_POST['pronto'])){
-                    $id_tarefa = $_POST["aFazer"];
-                    $sql_alterar_status = "UPDATE tarefas SET status_tarefa = 'A fazer' WHERE id_tarefa = ?";
-                    $stmt_alterar_status = $conn->prepare($sql_alterar_status);
-                    $stmt_alterar_status->bind_param('i', $id_tarefa);
-                    $stmt_alterar_status->execute();
-                    header("Refresh: 0");
-                    exit();
-                } elseif (isset($_POST['fazendo']) AND !isset($_POST['aFazer']) AND !isset($_POST['pronto'])){
-                    $id_tarefa = $_POST["fazendo"];
-                    $sql_alterar_status = "UPDATE tarefas SET status_tarefa = 'Fazendo' WHERE id_tarefa = ?";
-                    $stmt_alterar_status = $conn->prepare($sql_alterar_status);
-                    $stmt_alterar_status->bind_param('i', $id_tarefa);
-                    $stmt_alterar_status->execute();
-                    header("Refresh: 0");
-                    exit();
-                }elseif (isset($_POST['pronto']) AND !isset($_POST['fazendo']) AND !isset($_POST['aFazer'])){
-                    $id_tarefa = $_POST["pronto"];
-                    $sql_alterar_status = "UPDATE tarefas SET status_tarefa = 'Pronto' WHERE id_tarefa = ?";
-                    $stmt_alterar_status = $conn->prepare($sql_alterar_status);
-                    $stmt_alterar_status->bind_param('i', $id_tarefa);
-                    $stmt_alterar_status->execute();
-                    header("Refresh: 0");
-                    exit();
-                } else {
-                    echo "Selecione uma opção antes de atualizar os dados";
-                }
-            };
-        ?>
+        
    
 </body>
 </html> 
