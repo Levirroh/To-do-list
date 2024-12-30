@@ -70,7 +70,7 @@ $id_usuario = $_SESSION['id_usuario'];
     $stmt_fazendo = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'Fazendo' AND fk_usuario = '$id_usuario'");
     $stmt_fazendo->execute();
     $resultado_fazendo = $stmt_fazendo->get_result();
-    
+
 // tarefa concluida
     $stmt_pronto = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'Pronto' AND fk_usuario = '$id_usuario'");
     $stmt_pronto->execute();
@@ -134,7 +134,6 @@ $result_filtros = $stmt_filtros->get_result();
             <h2>Menu</h2>
         </div>
         <div>
-            <a href="cadastrar_tarefa.php"><button>Cadastrar tarefa</button></a>
             <a href="login.php"><button>Trocar de conta</button></a>
             <a href="cadastro.php"><button>Criar nova conta</button></a>
         </div>

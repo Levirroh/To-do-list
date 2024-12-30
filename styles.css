@@ -13,6 +13,12 @@ section{
     color: #fafafa;
 }
 
+header{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .popup{
     width:max-content ;
     margin: 3vh;
