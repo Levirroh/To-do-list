@@ -34,26 +34,24 @@ if (isset($_POST['login'])){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Login</title>
 </head>
-<header>
-
-</header>
 <body>
-    <section>
+    <section class="login-cadastro">
         <div>
-            <form method="POST">
+            <form method="POST" class="form-login">
                 <div>
                     <label for="nome_usuario">Nome de usuário:</label>
                     <br>
-                    <input type="text" name="nome_usuario">
+                    <input type="text" name="nome_usuario" class="valor-login">
                 </div>
                 <div>
                     <label for="senha_usuario">Senha:</label>
                     <br>
-                    <input type="text" name="senha_usuario">
+                    <input type="text" name="senha_usuario" class="valor-login">
                 </div>
-                <input type="submit" name="login" value="Entrar">
+                <input type="submit" name="login" value="Entrar" class="entrar">
             </form>
         </div>
         <div>
