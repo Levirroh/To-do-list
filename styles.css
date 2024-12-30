@@ -169,3 +169,34 @@ form{
     text-align: center;
     border-radius: 15px;
 }
+
+#cadastrar-tarefas{
+    background-color: #1b1b1b;
+    color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+}
+
+#form-tarefas input, textarea, select{
+    background-color: blanchedalmond;
+    color: black;
+}
+
+#form-tarefas{
+    background-color: goldenrod;
+    width: max-content;
+    color: black;
+    padding: 2vw;
+    border-radius: 30px;
+}
+
+.voltar{
+    margin-top: 30px;
+    background-color: #0056b3;
+    width: 8vw;
+    height: 4vh;
+    border-radius: 50px;
+}

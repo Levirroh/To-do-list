@@ -40,19 +40,14 @@ if (isset($_GET["id_tarefa"])) {
 <head>
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body id="cadastrar-tarefas">
     <header>
         <div>
             <h1>Tela de Cadastro de Tarefas</h1>
         </div>
-        <div>
-            <a href="index.php"><button>Menu Principal</button></a>
-            <a href="cadastrar_tarefa.php"><button>Cadastrar Tarefa</button></a>
-            <a href="cadastro.php"><button>Cadastrar Usuário</button></a>
-        </div>
     </header>
     <section>
-        <form method="POST">
+        <form method="POST" id="form-tarefas">
             <div>
                 <label for="nome_tarefa">Digite o nome da tarefa</label>
                 <br>
@@ -86,7 +81,7 @@ if (isset($_GET["id_tarefa"])) {
             </div>
             <input type="submit" value="Cadastrar" name="cadastrar_tarefa">
         </form>
-        <a href="index.php"><button>Voltar</button></a>
+        <a href="index.php"><button class="voltar">Voltar</button></a>
         <?php
         if (isset($_POST["cadastrar_tarefa"])) {
                 $descricao = $_POST['descricao'];
