@@ -49,13 +49,17 @@ $id_usuario = $_SESSION['id_usuario'];
         $assunto = false;
     };
     
-    if (isset($_POST['prioridade'])){
-    $assunto = true;
+    if (isset($_POST['filtrar_prioridade'])){
+        $prioridade_filtro = $_POST['prioridade'];
+        $stmt_aFazer = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'A fazer' AND fk_usuario = '$id_usuario' AND prioridade_tarefa = '$prioridade_filtro'");
+        $stmt_aFazer->execute();
+        $resultado_aFazer = $stmt_aFazer->get_result();
+        $prioridade = true;
     } else {
         $prioridade = false;
     };
         
-    if ($assunto == false AND $prioridade == false){
+    if ($assunto == false AND $prioridade == false OR isset($_POST['nenhum_filtro'])){
         $stmt_aFazer = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'A fazer' AND fk_usuario = '$id_usuario'");
         $stmt_aFazer->execute();
         $resultado_aFazer = $stmt_aFazer->get_result();
@@ -66,6 +70,7 @@ $id_usuario = $_SESSION['id_usuario'];
     $stmt_fazendo = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'Fazendo' AND fk_usuario = '$id_usuario'");
     $stmt_fazendo->execute();
     $resultado_fazendo = $stmt_fazendo->get_result();
+    
 // tarefa concluida
     $stmt_pronto = $conn->prepare("SELECT * FROM Tarefas INNER JOIN Usuarios ON usuarios.id_usuario = tarefas.fk_usuario WHERE status_tarefa = 'Pronto' AND fk_usuario = '$id_usuario'");
     $stmt_pronto->execute();
@@ -155,7 +160,7 @@ $result_filtros = $stmt_filtros->get_result();
                                         <option value='baixa'>Baixa</option>
                                     </select>
                                 </div>
-                                    <input type='submit' value='Filtrar' name='prioridade'>
+                                    <input type='submit' value='Filtrar' name='filtrar_prioridade'>
                             </form>
                             <form method='POST'>
                                 <div>
@@ -170,6 +175,9 @@ $result_filtros = $stmt_filtros->get_result();
                                     </select>
                                 </div>
                                 <input type='submit' value='Filtrar' name='filtrar_assunto'>
+                            </form>
+                            <form method='POST'>                                    
+                                <input type='submit' value='Retirar Filtros' name='nenhum_filtro'>
                             </form>
                         </div>";
                     while ($row = $resultado_aFazer->fetch_assoc()) {
@@ -225,7 +233,8 @@ $result_filtros = $stmt_filtros->get_result();
                         <div class='status'>";
                     if ($resultado_fazendo->num_rows > 0) {
                         while ($row = $resultado_fazendo->fetch_assoc()) {
-                            echo "<div class='tarefa'>
+                            $cor = $row['prioridade_tarefa'];
+                        echo "<div class='tarefa $cor'>
                                     <h3>Nome: {$row['nome_tarefa']}</h3>
                                     <p>Descrição: {$row['descricao_tarefa']}</p> 
                                     <p>assunto: {$row['assunto_tarefa']}</p> 
@@ -276,7 +285,7 @@ $result_filtros = $stmt_filtros->get_result();
                     if ($resultado_pronto->num_rows > 0) {
                         while ($row = $resultado_pronto->fetch_assoc()) {
                             $cor = $row['prioridade_tarefa'];
-                            echo "<div class='tarefa $cor'>
+                        echo "<div class='tarefa $cor'>
                                     <h3>Nome: {$row['nome_tarefa']}</h3>
                                     <p>Descrição: {$row['descricao_tarefa']}</p> 
                                     <p>assunto: {$row['assunto_tarefa']}</p> 

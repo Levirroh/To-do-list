@@ -14,6 +14,7 @@ if (isset($_GET["id_tarefa"])) {
     $dados_tarefa = $stmt_tarefa->get_result();
     $row = $dados_tarefa->fetch_assoc();
     $id_usuario_get = $_SESSION['id_usuario'];
+    $assunto_tarefa_get = $row['assunto_tarefa'];
     $prioridade_tarefa_get = $row['prioridade_tarefa'];
     $nome_usuario_get = $_SESSION['nome_usuario'];
     $nome_tarefa_get = $row['nome_tarefa'];
@@ -26,6 +27,13 @@ if (isset($_GET["id_tarefa"])) {
     $stmt_usuarios = $conn->prepare($sql_usuarios);
     $stmt_usuarios->execute();
     $result_usuarios = $stmt_usuarios->get_result();
+
+
+    $sql_assuntos = "SELECT DISTINCT assunto_tarefa FROM Tarefas";
+    $stmt_assuntos = $conn->prepare($sql_assuntos);
+    $stmt_assuntos->execute();
+    $result_assuntos = $stmt_assuntos->get_result();
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -57,8 +65,15 @@ if (isset($_GET["id_tarefa"])) {
             </div>
             
             <div>
-                <label for="assunto">Digite o assunto tarefa</label>
-                <input type="text" name="assunto" value="<?php if (isset($_GET["id_tarefa"])) {echo $row['assunto_tarefa'];} ?>">
+            <label for="assunto">Digite ou escolha o assunto da tarefa:</label>
+            <input list="assuntos" name="assunto" id="assunto" autocomplete="off" value="<?php echo isset($_GET['id_tarefa']) ? htmlspecialchars($assunto_tarefa_get) : ''; ?>">
+            <datalist id="assuntos">
+                <?php
+                while ($assunto = $result_assuntos->fetch_assoc()) {
+                    echo "<option value='{$assunto['assunto_tarefa']}'>{$assunto['assunto_tarefa']}</option>";
+                }
+                ?>
+            </datalist>
             </div>
             <div>
                 <label for="prioridade">Digite a urgência do tarefa</label>
